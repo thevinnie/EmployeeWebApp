@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="RandomModelStoreContainer" CdmEntityContainer="RandomEntities">
+    <EntitySetMapping Name="Employees">
+      <EntityTypeMapping TypeName="RandomModel.Employee">
+        <MappingFragment StoreEntitySet="Employees">
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Position" ColumnName="Position" />
+          <ScalarProperty Name="Department" ColumnName="Department" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="AnnualSalary" ColumnName="AnnualSalary" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="spEmployeeDelete" FunctionName="RandomModel.Store.spEmployeeDelete" />
+    <FunctionImportMapping FunctionImportName="spEmployeeInsert" FunctionName="RandomModel.Store.spEmployeeInsert" />
+    <FunctionImportMapping FunctionImportName="spEmployeeUpdate" FunctionName="RandomModel.Store.spEmployeeUpdate" />
+    <EntitySetMapping Name="EmployeeEncrypts">
+      <EntityTypeMapping TypeName="RandomModel.EmployeeEncrypt">
+        <MappingFragment StoreEntitySet="EmployeeEncrypt">
+          <ScalarProperty Name="SSN" ColumnName="SSN" />
+          <ScalarProperty Name="AnnualSalary" ColumnName="AnnualSalary" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="Department" ColumnName="Department" />
+          <ScalarProperty Name="Position" ColumnName="Position" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="spEmployeeEncryptUpdate" FunctionName="RandomModel.Store.spEmployeeEncryptUpdate" />
+  </EntityContainerMapping>
+</Mapping>
