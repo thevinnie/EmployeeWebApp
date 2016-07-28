@@ -1,12 +1,24 @@
 /*
-If necessary, create the database
+If necessary, create a database
 
-CREATE DATABASE Random
+CREATE DATABASE Modernize
+GO
+
+
+DROP DATABASE IF EXISTS Modernize
 GO
 
 */
 
-USE [Random]
+USE WideWorldImporters
+GO
+
+
+--  SO LONG ADVENTURE WORKS!
+DROP DATABASE IF EXISTS AdventureWorks2016CTP3
+GO
+
+DROP DATABASE IF EXISTS AdventureworksDW2016CTP3
 GO
 
 
@@ -31,6 +43,7 @@ GO
 DROP TABLE IF EXISTS [dbo].[EmployeeBaseHistory]
 GO
 
+/*
 CREATE TABLE [dbo].[EmployeeBase](
 	[EmployeeID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](100) NOT NULL,
@@ -48,6 +61,39 @@ PRIMARY KEY CLUSTERED ( [EmployeeID] ASC ) WITH (
 WITH
 ( SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].[EmployeeBaseHistory] , DATA_CONSISTENCY_CHECK = ON ))
 GO
+*/
+
+--  This method will create the system time versioning on an already existing object
+CREATE TABLE [dbo].[EmployeeBase](
+	[EmployeeID] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
+	[Position] [varchar](100) NOT NULL,
+	[Department] [varchar](100) NOT NULL,
+	[Address] [nvarchar](1024) NOT NULL ,
+	[AnnualSalary] [decimal](10, 2) NOT NULL,
+PRIMARY KEY CLUSTERED ( [EmployeeID] ASC ) WITH (
+  PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) 
+  ON [PRIMARY])
+
+GO
+
+ALTER TABLE [dbo].[EmployeeBase]
+ADD [ValidFrom] [datetime2](2) GENERATED ALWAYS AS ROW START NOT NULL
+		CONSTRAINT df_ValidFrom DEFAULT '19000101',
+	[ValidTo] [datetime2](2) GENERATED ALWAYS AS ROW END NOT NULL
+		CONSTRAINT df_ValidTo DEFAULT '99991231 23:59:59.99',
+	PERIOD FOR SYSTEM_TIME ([ValidFrom], [ValidTo])
+GO
+
+ALTER TABLE [dbo].[EmployeeBase]
+DROP CONSTRAINT df_ValidFrom, df_ValidTo
+GO
+
+ALTER TABLE [dbo].[EmployeeBase]
+SET ( SYSTEM_VERSIONING = ON 
+		(HISTORY_TABLE = [dbo].[EmployeeBaseHistory] , DATA_CONSISTENCY_CHECK = ON ))
+GO
+
 
 -- This is the series of stored procedures that will be called from the MVC application
 --  There is an INSERT, UPDATE and DELETE procedure
@@ -158,7 +204,7 @@ SELECT * FROM dbo.EmployeeBaseHistory
 -- Make changes
 
 UPDATE dbo.EmployeeBase
-SET AnnualSalary = 75000
+SET AnnualSalary = 85000
 
 /*
 Using the web application, make changes to the data
@@ -173,10 +219,8 @@ SELECT * FROM dbo.EmployeeBaseHistory
 --   Using a range will provide all records that were modified
 
 SELECT * FROM dbo.EmployeeBase
-FOR SYSTEM_TIME AS OF '2016-02-17 18:00:00.00'
+FOR SYSTEM_TIME AS OF '2016-07-28 08:42'
 
-SELECT * FROM dbo.Employees
-FOR SYSTEM_TIME AS OF '2016-02-17 18:00:00.00'
 
 
 
@@ -317,7 +361,8 @@ CREATE TABLE [dbo].[EmployeeEncrypt](
 	[Department] [varchar](100) NOT NULL,
 	[Address] [nvarchar](1024) NOT NULL,
 	[AnnualSalary] [decimal](10, 2) NOT NULL,
-	[SSN] CHAR(12) COLLATE Latin1_General_BIN2 ENCRYPTED WITH (ENCRYPTION_TYPE = DETERMINISTIC, ALGORITHM = 'AEAD_AES_256_CBC_HMAC_SHA_256', COLUMN_ENCRYPTION_KEY = SQL2016AlwaysEncryptedColumnKey)
+	[SSN] CHAR(12) COLLATE Latin1_General_BIN2 
+	--[SSN] CHAR(12) COLLATE Latin1_General_BIN2 ENCRYPTED WITH (ENCRYPTION_TYPE = DETERMINISTIC, ALGORITHM = 'AEAD_AES_256_CBC_HMAC_SHA_256', COLUMN_ENCRYPTION_KEY = SQL2016AlwaysEncryptedColumnKey)
 	);
 GO
 
@@ -335,7 +380,20 @@ UNION ALL SELECT 'Ralph','Consultant','Project Solutions','123 Polaris Pkwy','75
 UNION ALL SELECT 'Ester','Consultant','Data Solutions','123 Polaris Pkwy','75000', NULL
 UNION ALL SELECT 'Minnie','Consultant','Collaboration Solutions','123 Polaris Pkwy','75000', NULL
 UNION ALL SELECT 'Kamesh','Consultant','Collaboration Solutions','123 Polaris Pkwy','75000', NULL
+GO
 
+INSERT INTO dbo.[EmployeeEncrypt] (Name, Position, Department, Address, AnnualSalary, SSN)
+SELECT 'Vinnie','Consultant','Data Solutions','123 Polaris Pkwy','75000', '123-45-6789'
+UNION ALL SELECT 'Ted','Consultant','Mobile Solutions','123 Polaris Pkwy','75000', '223-45-6789'
+UNION ALL SELECT 'Bill','Consultant','Data Solutions','123 Polaris Pkwy','75000', '323-45-6789'
+UNION ALL SELECT 'Rachael','Consultant','Project Solutions','123 Polaris Pkwy','75000', '423-45-6789'
+UNION ALL SELECT 'Ashley','Consultant','Data Solutions','123 Polaris Pkwy','75000', '523-45-6789'
+UNION ALL SELECT 'Conor','Consultant','Data Solutions','123 Polaris Pkwy','75000', '623-45-6789'
+UNION ALL SELECT 'Ralph','Consultant','Project Solutions','123 Polaris Pkwy','75000', '723-45-6789'
+UNION ALL SELECT 'Ester','Consultant','Data Solutions','123 Polaris Pkwy','75000', '823-45-6789'
+UNION ALL SELECT 'Minnie','Consultant','Collaboration Solutions','123 Polaris Pkwy','75000', '923-45-6789'
+UNION ALL SELECT 'Kamesh','Consultant','Collaboration Solutions','123 Polaris Pkwy','75000', '023-45-6789'
+GO
 
 --  Check the results
 
