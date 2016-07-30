@@ -14,7 +14,7 @@ USE WideWorldImporters
 GO
 
 
---  SO LONG ADVENTURE WORKS!
+--  SO LONG, ADVENTURE WORKS!
 DROP DATABASE IF EXISTS AdventureWorks2016CTP3
 GO
 
@@ -219,9 +219,7 @@ SELECT * FROM dbo.EmployeeBaseHistory
 --   Using a range will provide all records that were modified
 
 SELECT * FROM dbo.EmployeeBase
-FOR SYSTEM_TIME AS OF '2016-07-28 08:42'
-
-
+FOR SYSTEM_TIME AS OF '2016-07-28 17:21'
 
 
 /**************************************************************************
@@ -252,8 +250,8 @@ GO
 --  Using SUSER_NAME function, associate a user to a department
 
 INSERT INTO dbo.UserSecurity
-SELECT SUSER_NAME(), 'Data Solutions'
---UNION ALL SELECT SUSER_NAME(), 'Project Solutions'
+/*SELECT SUSER_NAME(), 'Data Solutions'
+UNION ALL */SELECT SUSER_NAME(), 'Project Solutions'
 
 -- Validate the results
 
